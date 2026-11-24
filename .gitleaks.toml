@@ -1,13 +1,25 @@
-# Public chain identifiers. Field names such as keyStore make gitleaks treat the
-# following 0x address as a generic API key. These values are contract addresses,
-# transaction hashes, and bytes32 ids from docs/SPEC.md.
+# gitleaks-action@v3 runs gitleaks 8.24.3. That version extends the default
+# config and merges [[rules.allowlists]] onto the built-in rule.
 [extend]
 useDefault = true
 
-[[allowlists]]
-description = "Ethereum addresses and 32-byte hex identifiers"
-regexTarget = "secret"
+[[rules]]
+id = "generic-api-key"
+
+# The rule treats a value as a secret when the nearby name contains "key".
+# These are published contract addresses and one recorded KeyStore key id,
+# not credentials. Both the path and the exact value must match.
+[[rules.allowlists]]
+description = "Published Altana addresses and the recorded key id used by live-read"
+condition = "AND"
+paths = [
+  '''(?:^|/)packages/config/src/networks\.ts$''',
+  '''(?:^|/)packages/chain/src/live-read\.ts$''',
+]
 regexes = [
-  '''(?i)0x[a-f0-9]{40}''',
-  '''(?i)0x[a-f0-9]{64}''',
+  '''(?i)^0x83b30935f36d6ccf9B1ec3b5E47F2866b97cd27c$''',
+  '''(?i)^0x47bA5fc2A5b0CcB24BA3fAC9D4B59400eE9fd1D6$''',
+  '''(?i)^0xCC3df52B6aD826781AAD86EcEB1459ed0b1Ae3F6$''',
+  '''(?i)^0x54eAb49d805336DB8591BAAF9ac630D0A58Ad2cD$''',
+  '''(?i)^0x371e65b0b727c8686f99ca6d5a4a8fe43ab5a1fe3156fb5c63cf36c2ba37bb9d$''',
 ]
