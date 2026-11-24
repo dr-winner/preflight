@@ -15,7 +15,7 @@ The checks Preflight will run:
 - Independent-user funding graph
 - A lint and a safe passive security check of the entry's x402 endpoint
 
-This repository is the foundation. The API serves a health check. The landing page is a placeholder. The MCP package is a stub. Track checks are not implemented yet.
+The API serves a health check and `POST /v1/preflight/passive`. That route signs its probe results with the signer in `packages/checks`. The same package scores an entry against the track catalogue; the passive route does not run that catalogue yet. The landing page is a placeholder. The MCP package is a stub.
 
 Network selection is `NETWORK=testnet|mainnet`. `testnet` is Celo Sepolia (chain id 11142220) and the default. `mainnet` is Celo (chain id 42220). `CELO_NETWORK=sepolia|mainnet` selects the same tables. The tables, RPC URLs, and contract addresses live in `packages/config`. Textile has no reactor on Sepolia, so that check cannot pass on testnet. `docs/SPEC.md` is the build spec.
 
@@ -57,7 +57,7 @@ Start Postgres. The compose file uses local defaults `preflight` / `preflight` a
 docker compose up -d
 ```
 
-Set `DATABASE_URL` to `postgresql://preflight:preflight@localhost:5432/preflight`. The Drizzle client connects when a caller uses `createDb`. No route uses it yet.
+Set `DATABASE_URL` to `postgresql://preflight:preflight@localhost:5432/preflight`. The Drizzle client connects when a caller uses `createDb`. No route uses it yet. `pnpm test` applies `packages/db` migrations when `DATABASE_URL` is set. Without it, that test is skipped and the other tests still run.
 
 Landing placeholder:
 
@@ -100,6 +100,9 @@ apps/web          Next.js landing placeholder.
 packages/config   Testnet and mainnet tables, zod env validation.
 packages/core     Reader interfaces for the check engine.
 packages/chain    ERC-8004, Self, x402, Altana, Textile, and tag decoding.
+packages/checks   Track checks, report builder, and the EIP-191 signer the API uses.
+packages/probe    SSRF-safe fetch and the passive x402 lint.
+packages/db       Drizzle schema and Postgres migrations.
 packages/mcp      MCP server stub. No tool registered yet.
 docker-compose    Local Postgres 17.
 docs/SPEC.md      Build spec.

@@ -17,6 +17,20 @@ jobs:
   verify:
     name: install, typecheck, lint, test
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: preflight
+          POSTGRES_PASSWORD: preflight
+          POSTGRES_DB: preflight
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U preflight -d preflight"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -41,6 +55,8 @@ jobs:
 
       - name: Test
         run: pnpm test
+        env:
+          DATABASE_URL: postgresql://preflight:preflight@localhost:5432/preflight
 
       - name: Audit production dependencies
         run: pnpm audit --prod

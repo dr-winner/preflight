@@ -23,3 +23,17 @@ regexes = [
   '''(?i)^0x54eAb49d805336DB8591BAAF9ac630D0A58Ad2cD$''',
   '''(?i)^0x371e65b0b727c8686f99ca6d5a4a8fe43ab5a1fe3156fb5c63cf36c2ba37bb9d$''',
 ]
+
+# Synthetic reports name each row "key". Those ids are check names, and keyStore
+# is the published Altana contract. Both the path and the exact value must match.
+[[rules.allowlists]]
+description = "Check ids and the Altana KeyStore address in synthetic reports"
+condition = "AND"
+paths = [
+  '''(?:^|/)packages/checks/src/fixtures/(?:passing|failing)-report\.json$''',
+]
+regexes = [
+  '''^g2\.erc8004\.wallet_match$''',
+  '''^g9\.self\.recommended$''',
+  '''(?i)^0x83b30935f36d6ccf9B1ec3b5E47F2866b97cd27c$''',
+]

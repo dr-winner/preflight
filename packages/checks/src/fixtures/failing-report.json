@@ -1,0 +1,242 @@
+{
+  "reportId": "01900000-0000-7000-8000-000000000002cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+  "version": 1,
+  "network": "mainnet",
+  "practice": false,
+  "generatedAt": "2026-11-24T12:00:00.000Z",
+  "input": {
+    "network": "mainnet",
+    "tracks": ["t3", "t4"],
+    "agentWallet": "0x1111111111111111111111111111111111111111",
+    "selfAgentId": "9",
+    "attributionCode": "celo_a1dce2bb4c45",
+    "repoUrl": "https://github.com/example/missing",
+    "payTo": "0x3333333333333333333333333333333333333333",
+    "x402PaymentTxs": ["0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"],
+    "altanaWallet": "0x4444444444444444444444444444444444444444"
+  },
+  "summary": {
+    "global": {
+      "status": "fail",
+      "blocking": [
+        "g1.erc8004.registered",
+        "g2.erc8004.wallet_match",
+        "g3.attribution.tags",
+        "g4.repo.public"
+      ],
+      "unresolved": ["g5.repo.code_window", "g7.x402.payto_registered"]
+    },
+    "t3": {
+      "status": "fail",
+      "blocking": ["t3.self.agent_mainnet", "t3.x402.payment_hash"],
+      "unresolved": []
+    },
+    "t4": {
+      "status": "fail",
+      "blocking": [
+        "t4.altana.wallet",
+        "t4.altana.session_key",
+        "t4.altana.revoked",
+        "t4.altana.tagged"
+      ],
+      "unresolved": []
+    }
+  },
+  "results": [
+    {
+      "key": "g1.erc8004.registered",
+      "track": "global",
+      "status": "fail",
+      "evidence": {
+        "observed": false,
+        "reason": "absent",
+        "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+        "selfAgentIds": []
+      },
+      "hint": "Register the agent on 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432. also register on 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432 to be safe."
+    },
+    {
+      "key": "g2.erc8004.wallet_match",
+      "track": "global",
+      "status": "fail",
+      "evidence": {
+        "observed": false,
+        "reason": "absent",
+        "agentWallet": "0x1111111111111111111111111111111111111111"
+      },
+      "hint": "register from the wallet you added to your entry, or setAgentWallet"
+    },
+    {
+      "key": "g3.attribution.tags",
+      "track": "global",
+      "status": "fail",
+      "evidence": {
+        "observed": false,
+        "reason": "absent",
+        "expectedCode": "celo_a1dce2bb4c45",
+        "firstTaggedTx": null,
+        "firstUntaggedTx": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "untaggedBeforeFirstTagged": [
+          "0x1111111111111111111111111111111111111111111111111111111111111111"
+        ],
+        "tagged": 0,
+        "total": 1,
+        "codesSeen": [],
+        "excludedFacilitator": 0,
+        "truncated": false
+      },
+      "hint": "No tagged mainnet transaction. Send one with celo_a1dce2bb4c45 before any other mainnet activity."
+    },
+    {
+      "key": "g4.repo.public",
+      "track": "global",
+      "status": "fail",
+      "evidence": {
+        "observed": false,
+        "reason": "absent",
+        "repo": "example/missing"
+      },
+      "hint": "The repo URL does not resolve. Register a public GitHub repo that still exists at judging."
+    },
+    {
+      "key": "g5.repo.code_window",
+      "track": "global",
+      "status": "unknown",
+      "evidence": {
+        "observed": false,
+        "reason": "not_observable",
+        "repo": "example/missing"
+      },
+      "hint": "The repo does not resolve, so commit dates cannot be checked."
+    },
+    {
+      "key": "g6.mainnet.activity",
+      "track": "global",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "transactionCount": "1",
+        "tokenTransfers": false
+      },
+      "hint": "No change needed. This wallet has Celo mainnet transactions."
+    },
+    {
+      "key": "g7.x402.payto_registered",
+      "track": "global",
+      "status": "unknown",
+      "evidence": {
+        "observed": false,
+        "reason": "manual",
+        "payTo": "0x3333333333333333333333333333333333333333",
+        "comparedToLive402": false
+      },
+      "hint": "Register your PayTo address at sign-up. x402 payments do not carry attribution tags."
+    },
+    {
+      "key": "g9.self.recommended",
+      "track": "global",
+      "status": "warn",
+      "evidence": {
+        "observed": true,
+        "chainId": 42220,
+        "agentIds": []
+      },
+      "hint": "Self Agent ID is recommended for all tracks."
+    },
+    {
+      "key": "t3.self.agent_mainnet",
+      "track": "t3",
+      "status": "fail",
+      "evidence": {
+        "observed": false,
+        "reason": "absent",
+        "agentId": "9",
+        "chainId": 42220
+      },
+      "hint": "Celo Sepolia accepts mock passports only; register on mainnet with a real passport"
+    },
+    {
+      "key": "t3.x402.payment_hash",
+      "track": "t3",
+      "status": "fail",
+      "evidence": {
+        "observed": false,
+        "reason": "contradicted",
+        "hashes": [
+          {
+            "hash": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "detail": "sender is not a facilitator signer"
+          }
+        ]
+      },
+      "hint": "Submit a Celo mainnet x402 settlement from the facilitator, not a direct transfer."
+    },
+    {
+      "key": "t4.altana.wallet",
+      "track": "t4",
+      "status": "fail",
+      "evidence": {
+        "observed": false,
+        "reason": "absent",
+        "altanaWallet": "0x4444444444444444444444444444444444444444",
+        "keyStore": "0x83b30935f36d6ccf9B1ec3b5E47F2866b97cd27c",
+        "explorer": "https://explorer.altana.network/account/0x4444444444444444444444444444444444444444"
+      },
+      "hint": "Register an admin key (isRoot) for this wallet on the Celo mainnet KeyStore."
+    },
+    {
+      "key": "t4.altana.session_key",
+      "track": "t4",
+      "status": "fail",
+      "evidence": {
+        "observed": false,
+        "reason": "absent",
+        "altanaWallet": "0x4444444444444444444444444444444444444444",
+        "sessionKeys": [],
+        "capsOnChain": "unknown"
+      },
+      "hint": "Grant a session key with expiry > 0, plus a spend cap or a contract allowlist."
+    },
+    {
+      "key": "t4.altana.revoked",
+      "track": "t4",
+      "status": "fail",
+      "evidence": {
+        "observed": false,
+        "reason": "absent",
+        "altanaWallet": "0x4444444444444444444444444444444444444444",
+        "sessionKeys": 0,
+        "revokeTx": null
+      },
+      "hint": "Revoke a session key on Celo mainnet. Revocation is monotonic: getKey.revoked must be true."
+    },
+    {
+      "key": "t4.altana.tagged",
+      "track": "t4",
+      "status": "fail",
+      "evidence": {
+        "observed": false,
+        "reason": "absent",
+        "expectedCode": "celo_a1dce2bb4c45",
+        "altanaWallet": "0x4444444444444444444444444444444444444444",
+        "matchedTxs": [],
+        "codesSeen": [],
+        "total": 1
+      },
+      "hint": "createClient({ chains: [CELO], appCode: [\"my_app\", \"celo_a1dce2bb4c45\"] })"
+    }
+  ],
+  "checklistManual": [
+    "Register your PayTo address at sign-up. x402 payments do not carry attribution tags.",
+    "Show the session spend cap and contract allowlist in the demo. The KeyStore has no documented on-chain read for them.",
+    "Show the revoke transaction and the agent stopping in your demo."
+  ],
+  "dataSources": {
+    "rpc": "forno",
+    "explorer": "blockscout"
+  },
+  "disclaimer": "Heuristic pre-check; organisers decide eligibility.",
+  "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "digest": "0x81ee347c6019d61d4ac10971493a55a9ff8fafef33efd599284900bf61f1fdb1",
+  "signature": "0xb4c41085f579338acaad8c4703bc8ed7a809ed0c5d43d78a640144195b427d221112b74b54a690e2e15cff2481fe8cfc2578e6f9684590db88389553c1b412f91c"
+}
