@@ -67,6 +67,18 @@ pnpm --filter web dev
 
 Open http://127.0.0.1:3000.
 
+Paid passive check (Celo Sepolia). Set `SELLER_PAY_TO`, `X402_API_KEY`, and `REPORT_SIGNER_PRIVATE_KEY` in the environment, then:
+
+```bash
+pnpm --filter api dev
+curl -sS -D- -o /tmp/body.json -H 'content-type: application/json' -H 'accept: application/json' \
+  -d '{}' http://127.0.0.1:3001/v1/preflight/passive
+```
+
+The response is 402 and the `payment-required` header is a base64 v2 challenge. `pnpm demo:buyer` pays it when `DEMO_BUYER_PRIVATE_KEY` is a funded Sepolia key and `PREFLIGHT_URL` points at the route.
+
+Deploy uses `render.yaml` on Render's free plan. Creating the service needs a Render account only Dr Winner can open. Set `PUBLIC_BASE_URL`, `SELLER_PAY_TO`, `X402_API_KEY`, and `REPORT_SIGNER_PRIVATE_KEY` there. Do not pick a paid plan.
+
 `next dev` rewrites `apps/web/next-env.d.ts` so it points at `.next/dev/types`. Leave that rewrite out of commits. `pnpm typecheck` restores the committed path.
 
 ## Scripts
@@ -74,7 +86,8 @@ Open http://127.0.0.1:3000.
 - `pnpm typecheck` runs `tsc --noEmit` in every package.
 - `pnpm lint` runs ESLint and Prettier.
 - `pnpm test` runs Vitest.
-- `pnpm --filter api dev` serves the API, including `GET /health`.
+- `pnpm --filter api dev` serves the API, including `GET /health` and `POST /v1/preflight/passive`.
+- `pnpm demo:buyer` pays that route on Sepolia when `DEMO_BUYER_PRIVATE_KEY` is set.
 - `pnpm --filter web dev` serves the landing placeholder.
 - `pnpm format` writes Prettier formatting.
 - `pnpm audit:prod` runs `pnpm audit --prod`.

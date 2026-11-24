@@ -1,6 +1,9 @@
 import { type ServerType, serve } from "@hono/node-server";
 import { afterAll, describe, expect, it } from "vitest";
-import { app } from "./app.js";
+import { createApp } from "./app.js";
+import { loadConfig } from "./config.js";
+
+const app = createApp(loadConfig({}));
 
 describe("GET /health", () => {
   let server: ServerType | undefined;

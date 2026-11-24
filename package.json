@@ -13,14 +13,19 @@
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "test": "pnpm -r --if-present test",
-    "audit:prod": "pnpm audit --prod"
+    "audit:prod": "pnpm audit --prod",
+    "demo:buyer": "tsx scripts/demo-buyer.ts"
   },
   "devDependencies": {
+    "@x402/evm": "2.32.0",
+    "@x402/fetch": "2.32.0",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.15.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.10.1",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3",
+    "viem": "2.58.4",
     "typescript-eslint": "^8.74.0"
   }
 }

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The probe destroys an upstream body it will not finish reading, and it no longer waits on `dispatcher.close()` after a redirect or an oversized stream. A cross-origin redirect is followed as GET without the POST body or caller headers.
+- `POST /v1/preflight/passive` validates its JSON with zod before the x402 middleware. Invalid input is 400 and is not settled. Bodies over 16 KB are rejected.
 - Gitleaks no longer flags the published Altana contract addresses, or the recorded key id in `live-read.ts`, as generic API keys.
 
 ### Changed
@@ -17,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `POST /v1/preflight/passive` on Celo Sepolia returns HTTP 402 with a v2 `PAYMENT-REQUIRED` challenge and settles through the Celo facilitator. Report signing is behind `ReportSigner` until `packages/checks` lands.
+- `@preflight/probe` performs an SSRF-safe fetch and the X1–X13 and S1–S7 checks.
+- `scripts/demo-buyer.ts` pays the passive route with `@x402/fetch`. `render.yaml` is a free-tier deploy sketch.
 - `packages/config` exports the verified Celo mainnet and Sepolia tables and validates `NETWORK=testnet|mainnet`. `CELO_NETWORK=sepolia|mainnet` still selects those tables. The default is testnet.
 - `packages/core` reader interfaces and `packages/chain` implementations for ERC-8004, Self, x402 settlement, Altana KeyStore, Textile swaps, and attribution tags. Tests use recorded mainnet and Sepolia fixtures, including Forno's `eth_getLogs` block span.
 - `docs/SPEC.md`, the build spec, with the unit 2 resolutions written back into §1 and §11.
