@@ -17,7 +17,7 @@ The checks Preflight will run:
 
 This repository is the foundation. The API serves a health check. The landing page is a placeholder. The MCP package is a stub. Track checks are not implemented yet.
 
-Network selection is real: `CELO_NETWORK=sepolia` (the default) or `CELO_NETWORK=mainnet`. Development targets Celo Sepolia. Mainnet is a config switch for later.
+Network selection is `NETWORK=testnet|mainnet`. `testnet` is Celo Sepolia (chain id 11142220) and the default. `mainnet` is Celo (chain id 42220). `CELO_NETWORK=sepolia|mainnet` selects the same tables. The tables, RPC URLs, and contract addresses live in `packages/config`. Textile has no reactor on Sepolia, so that check cannot pass on testnet. `docs/SPEC.md` is the build spec.
 
 ## Quickstart
 
@@ -41,7 +41,7 @@ curl -sS http://127.0.0.1:3001/health
 { "ok": true }
 ```
 
-`/health` does not need a database or a filled-in environment. Empty values fall back to defaults: `CELO_NETWORK=sepolia`, port `3001`, and `NODE_ENV=development`.
+`/health` does not need a database or a filled-in environment. Empty values fall back to defaults: `NETWORK=testnet` (Celo Sepolia), port `3001`, and `NODE_ENV=development`. Set `NETWORK=mainnet` to point the API at Celo mainnet. `CELO_RPC_URL` and `CELO_SEPOLIA_RPC_URL` override the public Forno URLs.
 
 Copy the variable names when you are ready to set them:
 
@@ -82,11 +82,14 @@ Open http://127.0.0.1:3000.
 ## Architecture
 
 ```text
-apps/api        Hono on Node 22. Health route, zod config, Drizzle client.
-apps/web        Next.js landing placeholder.
-packages/core   Shared types. Empty until checks exist.
-packages/mcp    MCP server stub. No tool registered yet.
-docker-compose  Local Postgres 17.
+apps/api          Hono on Node 22. Health route, config, Drizzle client.
+apps/web          Next.js landing placeholder.
+packages/config   Testnet and mainnet tables, zod env validation.
+packages/core     Reader interfaces for the check engine.
+packages/chain    ERC-8004, Self, x402, Altana, Textile, and tag decoding.
+packages/mcp      MCP server stub. No tool registered yet.
+docker-compose    Local Postgres 17.
+docs/SPEC.md      Build spec.
 ```
 
 ```mermaid
@@ -109,7 +112,9 @@ flowchart LR
 
 Solid lines are wired. Dashed lines are not live yet.
 
-`loadConfig` in `apps/api/src/config.ts` reads `NODE_ENV`, `PORT`, `DATABASE_URL`, and `CELO_NETWORK`. Invalid values throw before the server listens. `CELO_NETWORK` accepts `sepolia` or `mainnet` and defaults to `sepolia`.
+`loadConfig` in `apps/api/src/config.ts` reads `NODE_ENV`, `PORT`, and `DATABASE_URL`, and loads the network through `packages/config`. `NETWORK` accepts `testnet` or `mainnet` and defaults to `testnet`. `CELO_NETWORK=sepolia` is the same choice as `NETWORK=testnet`. Invalid values throw before the server listens.
+
+Chain reads are behind the interfaces in `packages/core/src/readers.ts`: `Erc8004Reader`, `SelfReader`, `X402SettlementReader`, `AltanaReader`, `TextileReader`, and `TagDecoder`. `packages/chain` implements them. Tests replay recorded transactions and do not call the network.
 
 ## CI
 

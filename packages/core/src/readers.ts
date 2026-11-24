@@ -30,7 +30,9 @@ export interface SelfAgentInfo {
   isProofFresh: boolean;
   proofExpiresAt: string | null;
   proofProvider: string | null;
-  verificationStrength: string | null;
+  /** Live `/info` returns a number (`100`) plus `strengthLabel`. Either form is accepted. */
+  verificationStrength: string | number | null;
+  strengthLabel: string | null;
   network: string | null;
 }
 

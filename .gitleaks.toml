@@ -1,0 +1,13 @@
+# Public chain identifiers. Field names such as keyStore make gitleaks treat the
+# following 0x address as a generic API key. These values are contract addresses,
+# transaction hashes, and bytes32 ids from docs/SPEC.md.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Ethereum addresses and 32-byte hex identifiers"
+regexTarget = "secret"
+regexes = [
+  '''(?i)0x[a-f0-9]{40}''',
+  '''(?i)0x[a-f0-9]{64}''',
+]

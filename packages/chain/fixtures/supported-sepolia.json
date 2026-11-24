@@ -1,0 +1,62 @@
+{
+  "source": "GET https://api.x402.sepolia.celo.org/supported 2026-11-24",
+  "body": {
+    "kinds": [
+      {
+        "x402Version": 1,
+        "scheme": "exact",
+        "network": "celo-sepolia",
+        "extra": {
+          "defaultAsset": {
+            "asset": "0x01C5C0122039549AD1493B8220cABEdD739BC44E",
+            "symbol": "USDC",
+            "decimals": 6,
+            "name": "USDC",
+            "version": "2",
+            "assetTransferMethod": "eip3009"
+          },
+          "supportedAssets": [
+            {
+              "asset": "0x01C5C0122039549AD1493B8220cABEdD739BC44E",
+              "symbol": "USDC",
+              "decimals": 6,
+              "name": "USDC",
+              "version": "2",
+              "assetTransferMethod": "eip3009"
+            }
+          ]
+        }
+      },
+      {
+        "x402Version": 2,
+        "scheme": "exact",
+        "network": "eip155:11142220",
+        "extra": {
+          "extensions": ["eip2612GasSponsoring", "payment-identifier"],
+          "defaultAsset": {
+            "asset": "0x01C5C0122039549AD1493B8220cABEdD739BC44E",
+            "symbol": "USDC",
+            "decimals": 6,
+            "name": "USDC",
+            "version": "2",
+            "assetTransferMethod": "eip3009"
+          },
+          "supportedAssets": [
+            {
+              "asset": "0x01C5C0122039549AD1493B8220cABEdD739BC44E",
+              "symbol": "USDC",
+              "decimals": 6,
+              "name": "USDC",
+              "version": "2",
+              "assetTransferMethod": "eip3009"
+            }
+          ]
+        }
+      }
+    ],
+    "extensions": ["eip2612GasSponsoring", "payment-identifier"],
+    "signers": {
+      "eip155:11142220": ["0x0d74D5Cefd2e7F24E623330ebE3d8D4cB45fFB48"]
+    }
+  }
+}

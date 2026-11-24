@@ -1,0 +1,11 @@
+{
+  "source": "IdentityRegistry reads on https://forno.celo.org via createErc8004Reader",
+  "agentId": "10090",
+  "owner": "0xB2441B175d620A3Fd5CDef28fA1c6957e6224431",
+  "calls": {
+    "ownerOf": "0xB2441B175d620A3Fd5CDef28fA1c6957e6224431",
+    "getAgentWallet": "0xB2441B175d620A3Fd5CDef28fA1c6957e6224431",
+    "tokenURI": "data:application/json;base64,eyJkZXNjcmlwdGlvbiI6IlNldHRsZXMgYSBjbGllbnQncyBpbnZvaWNlIHRvIGEgTmlnZXJpYW4gZnJlZWxhbmNlciBpbiBuYWlyYSAoY05HTikgb24gQ2VsbywgcHJpdmF0ZWx5IGFuZCB3aXRoaW4gbGltaXRzIHRoZSBjbGllbnQgc2V0cy4iLCJpbWFnZSI6Imh0dHBzOi8vZG9jcy5hbHRhbmEubmV0d29yay9hbHRhbmEtaWNvbi5wbmciLCJuYW1lIjoiTmFpcmEgUmVhY2giLCJyZWdpc3RyYXRpb25zIjpbXSwic2VydmljZXMiOlt7ImVuZHBvaW50IjoiaHR0cHM6Ly9leHBsb3Jlci5hbHRhbmEubmV0d29yay9hY2NvdW50LzB4QjI0NDFCMTc1ZDYyMEEzRmQ1Q0RlZjI4ZkExYzY5NTdlNjIyNDQzMSIsIm5hbWUiOiJ3ZWIifV0sInR5cGUiOiJodHRwczovL2VpcHMuZXRoZXJldW0ub3JnL0VJUFMvZWlwLTgwMDQjcmVnaXN0cmF0aW9uLXYxIn0=",
+    "balanceOf": "1"
+  }
+}

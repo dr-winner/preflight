@@ -1,0 +1,21 @@
+{
+  "source": "KeyStore reads on https://forno.celo.org via createAltanaReader",
+  "user": "0x65B6Be7f24aB649267A4F2e5Ac4fBf1b16B31140",
+  "keyId": "0x371e65b0b727c8686f99ca6d5a4a8fe43ab5a1fe3156fb5c63cf36c2ba37bb9d",
+  "getKeys": [
+    "0x0c3384c056213ef72a0ee2940d2d57864e9b801fe43a1b4f09567f316bd17c73",
+    "0x371e65b0b727c8686f99ca6d5a4a8fe43ab5a1fe3156fb5c63cf36c2ba37bb9d"
+  ],
+  "getKey": {
+    "keyId": "0x371e65b0b727c8686f99ca6d5a4a8fe43ab5a1fe3156fb5c63cf36c2ba37bb9d",
+    "validator": "0x0000000000000000000000000000000000000000",
+    "publicKey": "0x0474a53e4e7ad7fea6eddd6942e9add9f5a543b9833e4c8a4614f6223eb4e18a9e5e06f0a9ea3b49691e1d5152cbe84fb16018ece0e45dde0fc671effbd0871fa2",
+    "metadata": "0x",
+    "nonce": "0",
+    "lastUpdated": "1795498464",
+    "revoked": false,
+    "expiry": 1802756047,
+    "isRoot": false
+  },
+  "isValidKey": true
+}

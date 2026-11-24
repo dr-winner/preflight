@@ -1,0 +1,13 @@
+{
+  "diff": 5001,
+  "inclusiveSpan": 5002,
+  "response": {
+    "jsonrpc": "2.0",
+    "error": {
+      "code": -32602,
+      "message": "query exceeds range, retry smaller (max block range 5000, got 5001)"
+    },
+    "id": 1
+  },
+  "queriedAtBlock": 83601600
+}
