@@ -1,0 +1,38 @@
+# Repository labels. Maintainers keep GitHub in sync with this list.
+# See CONTRIBUTING.md.
+- name: bug
+  color: d73a4a
+  description: Something is broken
+- name: enhancement
+  color: a2eeef
+  description: A new capability or improvement
+- name: documentation
+  color: "0075ca"
+  description: Docs only
+- name: good first issue
+  color: "7057ff"
+  description: Small and well specified
+- name: "area: api"
+  color: 1d76db
+  description: apps/api
+- name: "area: web"
+  color: 5319e7
+  description: apps/web
+- name: "area: core"
+  color: fbca04
+  description: packages/core
+- name: "area: mcp"
+  color: "006b75"
+  description: packages/mcp
+- name: "area: db"
+  color: 0e8a16
+  description: Drizzle, Postgres, and migrations
+- name: "area: ci"
+  color: c5def5
+  description: GitHub Actions and repository tooling
+- name: "priority: high"
+  color: b60205
+  description: Blocks the hackathon path
+- name: "priority: normal"
+  color: cfd3d7
+  description: Default priority

@@ -1,0 +1,50 @@
+name: Bug
+description: Report something that is broken
+title: "fix: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One issue maps to one branch and one pull request. See CONTRIBUTING.md.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened
+      description: Describe the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Commands, requests, and the response you saw.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - api
+        - web
+        - core
+        - mcp
+        - db
+        - ci
+        - docs
+    validations:
+      required: true
