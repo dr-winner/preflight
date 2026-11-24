@@ -1,0 +1,23 @@
+{
+  "source": "GET https://agent-api.self.xyz/api/agent/info/11142220/5 2026-11-24",
+  "body": {
+    "agentId": 5,
+    "chainId": 11142220,
+    "agentKey": "0x000000000000000000000000a7f2b8a0ba50b099ee2ad16a91176bed96e103f7",
+    "agentAddress": "0xA7F2B8A0Ba50b099Ee2ad16A91176bED96E103F7",
+    "isVerified": true,
+    "hasHumanProof": true,
+    "isProofFresh": true,
+    "proofExpiresAt": "2027-02-27T05:50:54.000Z",
+    "proofProvider": "0x5E61c3051Bf4115F90AacEAE6212bc419f8aBB6c",
+    "registeredAtBlock": 18887466,
+    "verificationStrength": 100,
+    "strengthLabel": "passport",
+    "credentials": {
+      "nationality": null,
+      "olderThan": 0,
+      "ofac": [false, false, false]
+    },
+    "network": "testnet"
+  }
+}

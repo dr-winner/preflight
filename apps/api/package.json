@@ -9,6 +9,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@preflight/config": "workspace:*",
     "@hono/node-server": "^2.1.11",
     "drizzle-orm": "^0.45.4",
     "hono": "^4.13.21",

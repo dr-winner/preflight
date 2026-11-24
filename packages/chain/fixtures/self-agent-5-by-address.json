@@ -1,0 +1,23 @@
+{
+  "source": "GET https://agent-api.self.xyz/api/agent/agents/11142220/0xA7F2B8A0Ba50b099Ee2ad16A91176bED96E103F7 2026-11-24",
+  "body": {
+    "humanAddress": "0xA7F2B8A0Ba50b099Ee2ad16A91176bED96E103F7",
+    "chainId": 11142220,
+    "agents": [
+      {
+        "agentId": 5,
+        "agentKey": "0x000000000000000000000000a7f2b8a0ba50b099ee2ad16a91176bed96e103f7",
+        "agentAddress": "0xA7F2B8A0Ba50b099Ee2ad16A91176bED96E103F7",
+        "isOwner": true,
+        "isAgentKey": true,
+        "isVerified": true,
+        "hasHumanProof": true,
+        "isProofFresh": true,
+        "proofExpiresAt": "2027-02-27T05:50:54.000Z"
+      }
+    ],
+    "totalCount": 1,
+    "ownedCount": 1,
+    "complete": true
+  }
+}

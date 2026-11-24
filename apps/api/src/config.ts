@@ -1,7 +1,7 @@
+import { loadNetworkConfig, type NetworkConfig } from "@preflight/config";
 import { z } from "zod";
 
 const nodeEnvSchema = z.enum(["development", "test", "production"]);
-const celoNetworkSchema = z.enum(["sepolia", "mainnet"]);
 
 const envSchema = z.object({
   NODE_ENV: nodeEnvSchema.optional(),
@@ -10,17 +10,15 @@ const envSchema = z.object({
     .regex(/^[1-9]\d*$/)
     .optional(),
   DATABASE_URL: z.string().min(1).optional(),
-  CELO_NETWORK: celoNetworkSchema.optional(),
 });
 
 export type NodeEnv = z.infer<typeof nodeEnvSchema>;
-export type CeloNetwork = z.infer<typeof celoNetworkSchema>;
 
 export type AppConfig = {
   nodeEnv: NodeEnv;
   port: number;
   databaseUrl: string | undefined;
-  celoNetwork: CeloNetwork;
+  network: NetworkConfig;
 };
 
 function blankToUndefined(value: string | undefined): string | undefined {
@@ -76,7 +74,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     NODE_ENV: blankToUndefined(env.NODE_ENV),
     PORT: blankToUndefined(env.PORT),
     DATABASE_URL: blankToUndefined(env.DATABASE_URL),
-    CELO_NETWORK: blankToUndefined(env.CELO_NETWORK),
   });
 
   if (!parsed.success) {
@@ -87,6 +84,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     nodeEnv: parsed.data.NODE_ENV ?? "development",
     port: readPort(parsed.data.PORT),
     databaseUrl: readDatabaseUrl(parsed.data.DATABASE_URL),
-    celoNetwork: parsed.data.CELO_NETWORK ?? "sepolia",
+    network: loadNetworkConfig(env),
   };
 }

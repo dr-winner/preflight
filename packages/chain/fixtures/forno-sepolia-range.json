@@ -1,0 +1,12 @@
+{
+  "diff": 100001,
+  "response": {
+    "jsonrpc": "2.0",
+    "error": {
+      "code": -32602,
+      "message": "query exceeds range, retry smaller (max block range 100000, got 100001)"
+    },
+    "id": 1
+  },
+  "block": 42218445
+}

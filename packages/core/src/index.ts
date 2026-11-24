@@ -1,5 +1,24 @@
 /**
  * Shared types for Preflight.
- * Track reports and proofs are added here when the checks exist.
+ * Reader contracts for the check engine are in `./readers.ts`.
  */
-export {};
+export type {
+  Address,
+  AltanaKey,
+  AltanaReader,
+  DecodedTag,
+  Erc8004Reader,
+  Hex,
+  NetworkName,
+  SelfAgentInfo,
+  SelfReader,
+  TagDecoder,
+  TextileClassification,
+  TextileFill,
+  TextileLog,
+  TextileReader,
+  TextileTransfer,
+  TxHash,
+  X402Settlement,
+  X402SettlementReader,
+} from "./readers.js";
