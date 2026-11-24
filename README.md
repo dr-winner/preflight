@@ -17,6 +17,8 @@ The checks Preflight will run:
 
 The API serves a health check and `POST /v1/preflight/passive`. That route signs its probe results with the signer in `packages/checks`. The same package scores an entry against the track catalogue; the passive route does not run that catalogue yet. The landing page is a placeholder. The MCP package is a stub.
 
+Signed reports carry `signer`, `digest`, and `signature`. `verifyReport` recovers the signing address and checks that it equals `signer`. Verifiers must also check `signer` against Preflight's published key, the `reportSigner` address on `GET /v1/info`, not only that the signature recovers.
+
 Network selection is `NETWORK=testnet|mainnet`. `testnet` is Celo Sepolia (chain id 11142220) and the default. `mainnet` is Celo (chain id 42220). `CELO_NETWORK=sepolia|mainnet` selects the same tables. The tables, RPC URLs, and contract addresses live in `packages/config`. Textile has no reactor on Sepolia, so that check cannot pass on testnet. `docs/SPEC.md` is the build spec.
 
 ## Quickstart

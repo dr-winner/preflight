@@ -9,7 +9,10 @@ import { plainObject, type JsonObject, type JsonValue } from "./json.js";
 export interface TrackSummary {
   status: CheckStatus;
   blocking: string[];
+  /** Unknowns that are not manual: missing input, a failed source, or something not observable. */
   unresolved: string[];
+  /** `unknown` results whose reason is `manual`. They do not change `status`. */
+  manual: string[];
 }
 
 export interface ReportResult {
@@ -82,24 +85,34 @@ function uuidV7(now: number, entropy: Uint8Array): string {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
+function isManual(result: CheckResult): boolean {
+  return result.status === "unknown" && result.evidence.reason === "manual";
+}
+
 function summarize(results: readonly CheckResult[], track: TrackId): TrackSummary {
   const mine = results.filter((result) => result.track === track);
-  const blocking = mine.filter((result) => result.status === "fail").map((result) => result.key);
-  const unresolved = mine
+  const manual = mine.filter(isManual).map((result) => result.key);
+  const automatic = mine.filter((result) => !isManual(result));
+  const blocking = automatic
+    .filter((result) => result.status === "fail")
+    .map((result) => result.key);
+  const unresolved = automatic
     .filter((result) => result.status === "unknown")
     .map((result) => result.key);
-  const warned = mine.some((result) => result.status === "warn");
+  const warned = automatic.some((result) => result.status === "warn");
   let status: CheckStatus;
-  if (blocking.length > 0) {
+  if (automatic.length === 0) {
+    status = mine.length === 0 ? "unknown" : "pass";
+  } else if (blocking.length > 0) {
     status = "fail";
-  } else if (unresolved.length > 0 || mine.length === 0) {
+  } else if (unresolved.length > 0) {
     status = "unknown";
   } else if (warned) {
     status = "warn";
   } else {
     status = "pass";
   }
-  return { status, blocking, unresolved };
+  return { status, blocking, unresolved, manual };
 }
 
 function stripUserinfo(value: string): string {

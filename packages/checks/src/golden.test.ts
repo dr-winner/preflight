@@ -403,9 +403,10 @@ describe("golden reports", () => {
     const report = await signed(passingInput, passingSources(), REPORT_PASS);
     expect(report.practice).toBe(false);
     expect(report.summary.global).toEqual({
-      status: "unknown",
+      status: "pass",
       blocking: [],
-      unresolved: ["g7.x402.payto_registered"],
+      unresolved: [],
+      manual: ["g7.x402.payto_registered"],
     });
     expect(report.summary.t3.status).toBe("pass");
     expect(report.summary.t4.status).toBe("pass");
@@ -450,6 +451,8 @@ describe("golden reports", () => {
     expect(status(report, "g3.attribution.tags")).toBe("fail");
     expect(status(report, "g6.mainnet.activity")).toBe("pass");
     expect(status(report, "g7.x402.payto_registered")).toBe("unknown");
+    expect(report.summary.global.manual).toEqual(["g7.x402.payto_registered"]);
+    expect(report.summary.global.unresolved).toEqual(["g5.repo.code_window"]);
     expect(status(report, "g9.self.recommended")).toBe("warn");
     expect(status(report, "t3.self.agent_mainnet")).toBe("fail");
     expect(status(report, "t3.x402.payment_hash")).toBe("fail");
@@ -460,5 +463,23 @@ describe("golden reports", () => {
       ),
     ).toBe(false);
     await expectGolden("failing-report", report);
+  });
+
+  it("stays unknown when an automatic check could not be read", async () => {
+    const report = await signed(
+      passingInput,
+      {
+        ...passingSources(),
+        github: {
+          repo: () => Promise.reject(new Error("GitHub is down")),
+          commitsBefore: () => Promise.reject(new Error("GitHub is down")),
+        },
+      },
+      REPORT_PASS,
+    );
+    expect(report.summary.global.status).toBe("unknown");
+    expect(report.summary.global.unresolved).toEqual(["g4.repo.public", "g5.repo.code_window"]);
+    expect(report.summary.global.manual).toEqual(["g7.x402.payto_registered"]);
+    expect(report.summary.t3.status).toBe("pass");
   });
 });
