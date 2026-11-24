@@ -1,0 +1,306 @@
+{
+  "reportId": "01900000-0000-7000-8000-000000000001abababababababababababababababab",
+  "version": 1,
+  "network": "mainnet",
+  "practice": false,
+  "generatedAt": "2026-11-24T12:00:00.000Z",
+  "input": {
+    "network": "mainnet",
+    "tracks": ["t3", "t4"],
+    "agentWallet": "0x1111111111111111111111111111111111111111",
+    "erc8004AgentId": "42",
+    "selfAgentId": "42",
+    "attributionCode": "celo_a1dce2bb4c45",
+    "repoUrl": "https://github.com/example/passing-agent",
+    "payTo": "0x3333333333333333333333333333333333333333",
+    "x402PaymentTxs": ["0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+    "altanaWallet": "0x4444444444444444444444444444444444444444",
+    "altanaRevokeTx": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "summary": {
+    "global": {
+      "status": "pass",
+      "blocking": [],
+      "unresolved": [],
+      "manual": ["g7.x402.payto_registered"]
+    },
+    "t3": {
+      "status": "pass",
+      "blocking": [],
+      "unresolved": [],
+      "manual": []
+    },
+    "t4": {
+      "status": "pass",
+      "blocking": [],
+      "unresolved": [],
+      "manual": []
+    }
+  },
+  "results": [
+    {
+      "key": "g1.erc8004.registered",
+      "track": "global",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+        "agentId": "42",
+        "owner": "0x1111111111111111111111111111111111111111",
+        "agentWallet": "0x1111111111111111111111111111111111111111",
+        "tokenUri": "data:application/json,%7B%22type%22%3A%22https%3A%2F%2Feips.ethereum.org%2FEIPS%2Feip-8004%23registration-v1%22%2C%22name%22%3A%22Passing%20Agent%22%2C%22services%22%3A%5B%7B%22name%22%3A%22web%22%2C%22endpoint%22%3A%22https%3A%2F%2Fexample.com%22%7D%5D%2C%22x402Support%22%3Atrue%2C%22registrations%22%3A%5B%7B%22agentId%22%3A42%2C%22agentRegistry%22%3A%22eip155%3A42220%3A0x8004A169FB4a3325136EB29fA0ceB6D2e539a432%22%7D%5D%7D",
+        "selfAgentIds": ["42"],
+        "registration": {
+          "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+          "serviceCount": 1,
+          "x402Support": true,
+          "agentRegistry": "eip155:42220:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432"
+        }
+      },
+      "hint": "No change needed for ERC-8004 registration. Keep this token on the selected network."
+    },
+    {
+      "key": "g2.erc8004.wallet_match",
+      "track": "global",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "agentId": "42",
+        "matched": "owner_and_agentWallet",
+        "owner": "0x1111111111111111111111111111111111111111",
+        "agentWalletOnIdentity": "0x1111111111111111111111111111111111111111",
+        "entryWallet": "0x1111111111111111111111111111111111111111"
+      },
+      "hint": "No change needed. The identity is tied to the wallet on the entry."
+    },
+    {
+      "key": "g3.attribution.tags",
+      "track": "global",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "expectedCode": "celo_a1dce2bb4c45",
+        "firstTaggedTx": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "firstUntaggedTx": null,
+        "untaggedBeforeFirstTagged": [],
+        "tagged": 1,
+        "total": 1,
+        "codesSeen": ["celo_a1dce2bb4c45"],
+        "excludedFacilitator": 0,
+        "truncated": false
+      },
+      "hint": "No change needed. Keep tagging every mainnet transaction with celo_a1dce2bb4c45."
+    },
+    {
+      "key": "g4.repo.public",
+      "track": "global",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "repo": "example/passing-agent",
+        "private": false
+      },
+      "hint": "Keep this repository public through judging."
+    },
+    {
+      "key": "g5.repo.code_window",
+      "track": "global",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "repo": "example/passing-agent",
+        "fork": false,
+        "createdAt": "2026-11-21T00:00:00.000Z",
+        "commitsBeforeWindow": 0,
+        "windowOpensAt": "2026-11-20T14:00:00.000Z"
+      },
+      "hint": "No change needed. The commits we could see start on or after 20 Nov 2026 14:00 GMT."
+    },
+    {
+      "key": "g6.mainnet.activity",
+      "track": "global",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "transactionCount": "1",
+        "tokenTransfers": false
+      },
+      "hint": "No change needed. This wallet has Celo mainnet transactions."
+    },
+    {
+      "key": "g7.x402.payto_registered",
+      "track": "global",
+      "status": "unknown",
+      "evidence": {
+        "observed": false,
+        "reason": "manual",
+        "payTo": "0x3333333333333333333333333333333333333333",
+        "comparedToLive402": false
+      },
+      "hint": "Register your PayTo address at sign-up. x402 payments do not carry attribution tags."
+    },
+    {
+      "key": "g9.self.recommended",
+      "track": "global",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "chainId": 42220,
+        "agentIds": ["42"]
+      },
+      "hint": "No change needed. Keep the Self agent registered for this wallet."
+    },
+    {
+      "key": "t3.self.agent_mainnet",
+      "track": "t3",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "agentId": "42",
+        "chainId": 42220,
+        "network": "mainnet",
+        "isVerified": true,
+        "hasHumanProof": true,
+        "isProofFresh": true,
+        "proofExpiresAt": "2027-06-01T00:00:00.000Z",
+        "agentAddress": "0x1111111111111111111111111111111111111111",
+        "verificationStrength": 100,
+        "strengthLabel": "passport",
+        "expiry": "ok",
+        "onChainAgentId": "42",
+        "onChainFresh": true,
+        "onChainVerified": true
+      },
+      "hint": "No change needed. The mainnet Self agent is verified and the proof is fresh."
+    },
+    {
+      "key": "t3.x402.payment_hash",
+      "track": "t3",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "side": "payee",
+        "asset": "0xcebA9300f2b948710d2653dD7B07f33A8B32118C",
+        "selector": "0xe3ee160e",
+        "payer": null,
+        "payee": "0x3333333333333333333333333333333333333333",
+        "rejected": []
+      },
+      "hint": "No change needed. Keep a mainnet facilitator settlement that pays the registered payTo."
+    },
+    {
+      "key": "t4.altana.wallet",
+      "track": "t4",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "altanaWallet": "0x4444444444444444444444444444444444444444",
+        "keyStore": "0x83b30935f36d6ccf9B1ec3b5E47F2866b97cd27c",
+        "explorer": "https://explorer.altana.network/account/0x4444444444444444444444444444444444444444",
+        "rootKeyId": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "keys": [
+          {
+            "keyId": "0x1111111111111111111111111111111111111111111111111111111111111111",
+            "validator": "0x1111111111111111111111111111111111111111",
+            "expiry": 0,
+            "isRoot": true,
+            "revoked": false,
+            "isValidKey": true
+          },
+          {
+            "keyId": "0x2222222222222222222222222222222222222222222222222222222222222222",
+            "validator": "0x1111111111111111111111111111111111111111",
+            "expiry": 1798113600,
+            "isRoot": false,
+            "revoked": false,
+            "isValidKey": true
+          },
+          {
+            "keyId": "0x3333333333333333333333333333333333333333333333333333333333333333",
+            "validator": "0x1111111111111111111111111111111111111111",
+            "expiry": 1798113600,
+            "isRoot": false,
+            "revoked": true,
+            "isValidKey": false
+          }
+        ]
+      },
+      "hint": "No change needed. The admin key is registered on the Celo mainnet KeyStore."
+    },
+    {
+      "key": "t4.altana.session_key",
+      "track": "t4",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "altanaWallet": "0x4444444444444444444444444444444444444444",
+        "sessionKeys": [
+          {
+            "keyId": "0x2222222222222222222222222222222222222222222222222222222222222222",
+            "validator": "0x1111111111111111111111111111111111111111",
+            "expiry": 1798113600,
+            "isRoot": false,
+            "revoked": false,
+            "isValidKey": true
+          },
+          {
+            "keyId": "0x3333333333333333333333333333333333333333333333333333333333333333",
+            "validator": "0x1111111111111111111111111111111111111111",
+            "expiry": 1798113600,
+            "isRoot": false,
+            "revoked": true,
+            "isValidKey": false
+          }
+        ],
+        "capsOnChain": "unknown",
+        "expiry": 1798113600
+      },
+      "hint": "Set a spend cap and a contract allowlist in the session grant, and show both in the demo."
+    },
+    {
+      "key": "t4.altana.revoked",
+      "track": "t4",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "altanaWallet": "0x4444444444444444444444444444444444444444",
+        "revokedKeyIds": ["0x3333333333333333333333333333333333333333333333333333333333333333"],
+        "isValidKeyFalse": true,
+        "revokeTx": {
+          "hash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "status": "success"
+        },
+        "agentStopped": "unknown"
+      },
+      "hint": "Show the revoke transaction and the agent stopping in your demo."
+    },
+    {
+      "key": "t4.altana.tagged",
+      "track": "t4",
+      "status": "pass",
+      "evidence": {
+        "observed": true,
+        "expectedCode": "celo_a1dce2bb4c45",
+        "altanaWallet": "0x4444444444444444444444444444444444444444",
+        "matchedTxs": ["0xdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"],
+        "codesSeen": ["altana", "celo_a1dce2bb4c45"],
+        "total": 1
+      },
+      "hint": "No change needed. Keep appCode including celo_a1dce2bb4c45."
+    }
+  ],
+  "checklistManual": [
+    "Register your PayTo address at sign-up. x402 payments do not carry attribution tags.",
+    "Show the session spend cap and contract allowlist in the demo. The KeyStore has no documented on-chain read for them.",
+    "Show the revoke transaction and the agent stopping in your demo."
+  ],
+  "dataSources": {
+    "rpc": "forno",
+    "explorer": "blockscout"
+  },
+  "disclaimer": "Heuristic pre-check; organisers decide eligibility.",
+  "signer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "digest": "0xa895b8c69bac59c33ed576e0f05ac2c38b3d8e0ab344db6d22447d8d053e58c4",
+  "signature": "0x55c51787bcf2680898486c22cbd10edbca973a3842009c1a6f9f89cdc71873182f3aec2c00f43d13f9b8cc0413b966c4c5906d35f1378b53a88681afdf690cce1c"
+}
