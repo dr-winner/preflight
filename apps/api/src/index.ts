@@ -1,8 +1,13 @@
 import { serve } from "@hono/node-server";
-import { app } from "./app.js";
+import { createApp, signerFromConfig } from "./app.js";
 import { loadConfig } from "./config.js";
 
 const config = loadConfig();
+const signer = signerFromConfig(config);
+const app = createApp(config, {
+  ...(signer === undefined ? {} : { signer }),
+  syncFacilitatorOnStart: true,
+});
 
 serve({ fetch: app.fetch, hostname: "0.0.0.0", port: config.port }, (info) => {
   const database = config.databaseUrl === undefined ? "unset" : "set";
