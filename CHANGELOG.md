@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The probe destroys an upstream body it will not finish reading, and it no longer waits on `dispatcher.close()` after a redirect or an oversized stream. A cross-origin redirect is followed as GET without the POST body or caller headers.
+- `POST /v1/preflight/passive` validates its JSON with zod before the x402 middleware. Invalid input is 400 and is not settled. Bodies over 16 KB are rejected.
 - Gitleaks no longer flags the published Altana contract addresses, or the recorded key id in `live-read.ts`, as generic API keys.
 
 ### Changed

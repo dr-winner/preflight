@@ -5,6 +5,58 @@ import { loadConfig } from "./config.js";
 import { createEip191ReportSigner } from "./report/signer.js";
 
 describe("POST /v1/preflight/passive", () => {
+  it("rejects invalid input before payment", async () => {
+    const app = createApp(loadConfig({}));
+    const cases = [
+      { body: "not-json", error: "invalid_json" },
+      { body: JSON.stringify({ network: "sepolia" }), error: "invalid_input" },
+      { body: JSON.stringify({ x402Url: "ftp://files.example/a" }), error: "invalid_input" },
+      {
+        body: JSON.stringify({ x402Url: `https://example.com/${"a".repeat(2048)}` }),
+        error: "invalid_input",
+      },
+      { body: JSON.stringify({ payTo: "0xabc" }), error: "invalid_input" },
+      {
+        body: JSON.stringify({ payTo: "0xAbCdEf0000000000000000000000000000000000" }),
+        error: "invalid_input",
+      },
+      { body: JSON.stringify({ extra: true }), error: "invalid_input" },
+    ];
+    for (const item of cases) {
+      const response = await app.request("http://127.0.0.1/v1/preflight/passive", {
+        method: "POST",
+        headers: { "content-type": "application/json", accept: "application/json" },
+        body: item.body,
+      });
+      expect(response.status).toBe(400);
+      expect(response.headers.get("payment-required")).toBeNull();
+      const payload = (await response.json()) as { error: string };
+      expect(payload.error).toBe(item.error);
+    }
+  });
+
+  it("accepts a lowercase payTo and still refuses to settle when x402 is not configured", async () => {
+    const app = createApp(loadConfig({}));
+    const response = await app.request("http://127.0.0.1/v1/preflight/passive", {
+      method: "POST",
+      headers: { "content-type": "application/json", accept: "application/json" },
+      body: JSON.stringify({ payTo: `0x${"ab".repeat(20)}`, network: "testnet" }),
+    });
+    expect(response.status).toBe(503);
+    expect(response.headers.get("payment-required")).toBeNull();
+  });
+
+  it("rejects a body over 16 KB before payment", async () => {
+    const app = createApp(loadConfig({}));
+    const response = await app.request("http://127.0.0.1/v1/preflight/passive", {
+      method: "POST",
+      headers: { "content-type": "application/json", accept: "application/json" },
+      body: `{"x402Url":"https://example.com/${"a".repeat(20_000)}"}`,
+    });
+    expect(response.status).toBe(413);
+    expect(response.headers.get("payment-required")).toBeNull();
+  });
+
   it("returns a v2 PAYMENT-REQUIRED challenge", async () => {
     const signerKey = generatePrivateKey();
     const seller = privateKeyToAccount(generatePrivateKey());

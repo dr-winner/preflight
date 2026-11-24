@@ -1,6 +1,7 @@
 import { Hono } from "hono";
+import { bodyLimit } from "hono/body-limit";
 import type { AppConfig } from "./config.js";
-import { passiveHandler, rememberPayment } from "./passive.js";
+import { passiveHandler, rememberPayment, validatePassiveBody } from "./passive.js";
 import { createMemoryPaymentStore, type PaymentStore } from "./payments.js";
 import { createEip191ReportSigner, type ReportSigner } from "./report/signer.js";
 import { passivePayment } from "./x402.js";
@@ -36,6 +37,16 @@ export function createApp(config: AppConfig, deps: AppDeps = {}): Hono {
     }
     return c.json(record);
   });
+
+  app.use(
+    "/v1/preflight/*",
+    bodyLimit({
+      maxSize: 16 * 1024,
+      onError: (c) =>
+        c.json({ error: "body_too_large", hint: "Request body must be at most 16 KB." }, 413),
+    }),
+  );
+  app.use("/v1/preflight/passive", validatePassiveBody());
 
   const ready =
     config.sellerPayTo !== undefined &&

@@ -1,44 +1,78 @@
 import { randomUUID } from "node:crypto";
 import { decodePaymentResponseHeader } from "@x402/core/http";
 import { probeTarget, type ProbeCheck } from "@preflight/probe";
-import type { Context } from "hono";
+import type { Context, MiddlewareHandler } from "hono";
+import { getAddress } from "viem";
+import { z } from "zod";
 import type { AppConfig } from "./config.js";
 import type { PaymentStore } from "./payments.js";
 import type { ReportSigner, UnsignedReport } from "./report/signer.js";
 
-export interface PassiveBody {
-  network?: "mainnet" | "testnet";
-  x402Url?: string;
-  x402Method?: "GET" | "POST";
-  payTo?: string;
-}
+const payToSchema = z
+  .string()
+  .regex(/^0x[0-9a-fA-F]{40}$/)
+  .refine((value) => {
+    if (value === value.toLowerCase()) {
+      return true;
+    }
+    try {
+      return getAddress(value) === value;
+    } catch {
+      return false;
+    }
+  }, "payTo must be lowercase or EIP-55 checksummed");
 
-function asBody(value: unknown): PassiveBody {
-  if (typeof value !== "object" || value === null) {
-    return {};
-  }
-  const record = value as Record<string, unknown>;
-  return {
-    ...(record.network === "mainnet" || record.network === "testnet"
-      ? { network: record.network }
-      : {}),
-    ...(typeof record.x402Url === "string" ? { x402Url: record.x402Url } : {}),
-    ...(record.x402Method === "GET" || record.x402Method === "POST"
-      ? { x402Method: record.x402Method }
-      : {}),
-    ...(typeof record.payTo === "string" ? { payTo: record.payTo } : {}),
+export const passiveBodySchema = z
+  .object({
+    network: z.enum(["mainnet", "testnet"]).optional(),
+    x402Url: z
+      .string()
+      .max(2048)
+      .refine((value) => {
+        try {
+          const url = new URL(value);
+          return url.protocol === "http:" || url.protocol === "https:";
+        } catch {
+          return false;
+        }
+      }, "x402Url must be an http(s) URL")
+      .optional(),
+    x402Method: z.enum(["GET", "POST"]).optional(),
+    payTo: payToSchema.optional(),
+  })
+  .strict();
+
+export type PassiveBody = z.infer<typeof passiveBodySchema>;
+
+export function validatePassiveBody(): MiddlewareHandler {
+  return async (c, next) => {
+    if (c.req.method !== "POST") {
+      return next();
+    }
+    let raw: unknown;
+    try {
+      raw = await c.req.json();
+    } catch {
+      return c.json({ error: "invalid_json", hint: "Body must be a JSON object." }, 400);
+    }
+    const parsed = passiveBodySchema.safeParse(raw);
+    if (!parsed.success) {
+      const hint = parsed.error.issues
+        .map((issue) => `${issue.path.join(".") || "body"}: ${issue.message}`)
+        .join("; ");
+      return c.json({ error: "invalid_input", hint }, 400);
+    }
+    c.set("passiveBody", parsed.data);
+    return next();
   };
 }
 
 export function passiveHandler(config: AppConfig, signer: ReportSigner) {
   return async (c: Context) => {
-    let parsed: unknown;
-    try {
-      parsed = await c.req.json();
-    } catch {
-      parsed = {};
+    const body = c.get("passiveBody") as PassiveBody | undefined;
+    if (body === undefined) {
+      return c.json({ error: "invalid_input", hint: "Body was not validated." }, 400);
     }
-    const body = asBody(parsed);
     const results: ProbeCheck[] =
       body.x402Url === undefined
         ? []

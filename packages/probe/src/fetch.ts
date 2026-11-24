@@ -101,6 +101,44 @@ export function pinnedDispatcher(address: string, servername: string | undefined
   });
 }
 
+function destroyBody(body: AsyncIterable<Uint8Array> | null): void {
+  if (body === null) {
+    return;
+  }
+  const stream = body as AsyncIterable<Uint8Array> & {
+    destroy?: (error?: Error) => void;
+    return?: (value?: undefined) => Promise<IteratorResult<Uint8Array>>;
+  };
+  try {
+    if (typeof stream.destroy === "function") {
+      stream.destroy(new Error("probe aborted"));
+      return;
+    }
+    if (typeof stream.return === "function") {
+      void stream.return(undefined).catch(() => undefined);
+    }
+  } catch {
+    // The stream is already closed.
+  }
+}
+
+function destroyDispatcher(dispatcher: Dispatcher): void {
+  const closer = dispatcher as Dispatcher & {
+    destroy?: (error?: Error) => void | Promise<void>;
+  };
+  if (typeof closer.destroy !== "function") {
+    return;
+  }
+  try {
+    const result = closer.destroy(new Error("probe finished"));
+    if (result instanceof Promise) {
+      void result.catch(() => undefined);
+    }
+  } catch {
+    // The dispatcher is already closed.
+  }
+}
+
 async function readCapped(
   body: AsyncIterable<Uint8Array> | null,
   maxBytes: number,
@@ -110,12 +148,17 @@ async function readCapped(
   }
   const chunks: Buffer[] = [];
   let size = 0;
-  for await (const chunk of body) {
-    size += chunk.byteLength;
-    if (size > maxBytes) {
-      throw new ProbeError("response body exceeds cap");
+  try {
+    for await (const chunk of body) {
+      size += chunk.byteLength;
+      if (size > maxBytes) {
+        throw new ProbeError("response body exceeds cap");
+      }
+      chunks.push(Buffer.from(chunk));
     }
-    chunks.push(Buffer.from(chunk));
+  } catch (error) {
+    destroyBody(body);
+    throw error;
   }
   return Buffer.concat(chunks).toString("utf8");
 }
@@ -128,6 +171,9 @@ export async function safeFetch(rawUrl: string, options: SafeFetchOptions): Prom
   const totalTimeoutMs = options.totalTimeoutMs ?? DEFAULT_TOTAL_TIMEOUT_MS;
   const connectTimeoutMs = options.connectTimeoutMs ?? DEFAULT_CONNECT_TIMEOUT_MS;
   let current = rawUrl;
+  let method = options.method ?? "GET";
+  let postBody = options.body;
+  let callerHeaders = options.headers;
 
   for (let hop = 0; hop <= maxRedirects; hop += 1) {
     const classified = classifyUrl(current);
@@ -154,15 +200,15 @@ export async function safeFetch(rawUrl: string, options: SafeFetchOptions): Prom
       pinned,
       url.protocol === "https:" ? url.hostname : undefined,
     );
-    const method = options.method ?? "GET";
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), totalTimeoutMs);
+    let upstreamBody: AsyncIterable<Uint8Array> | null = null;
     try {
       const headersToSend = {
         "user-agent": options.userAgent,
         accept: "application/json",
         ...(method === "POST" ? { "content-type": "application/json" } : {}),
-        ...options.headers,
+        ...(callerHeaders ?? {}),
       };
       const response =
         options.request === undefined
@@ -173,7 +219,7 @@ export async function safeFetch(rawUrl: string, options: SafeFetchOptions): Prom
               headersTimeout: connectTimeoutMs,
               bodyTimeout: totalTimeoutMs,
               headers: headersToSend,
-              ...(method === "POST" ? { body: options.body ?? "{}" } : {}),
+              ...(method === "POST" ? { body: postBody ?? "{}" } : {}),
             }).then(
               (upstream: {
                 statusCode: number;
@@ -190,8 +236,9 @@ export async function safeFetch(rawUrl: string, options: SafeFetchOptions): Prom
               dispatcher,
               signal: controller.signal,
               headers: headersToSend,
-              ...(method === "POST" ? { body: options.body ?? "{}" } : {}),
+              ...(method === "POST" ? { body: postBody ?? "{}" } : {}),
             });
+      upstreamBody = response.body;
       const headers = normalizeHeaders(Object.entries(response.headers));
       if (headerBytes(headers) > maxHeaderBytes) {
         throw new ProbeError("response headers exceed cap");
@@ -201,10 +248,17 @@ export async function safeFetch(rawUrl: string, options: SafeFetchOptions): Prom
         if (location === undefined || hop === maxRedirects) {
           throw new ProbeError("redirect not allowed");
         }
-        current = new URL(location, url).toString();
+        const nextUrl = new URL(location, url);
+        if (nextUrl.origin !== url.origin) {
+          method = "GET";
+          postBody = undefined;
+          callerHeaders = {};
+        }
+        current = nextUrl.toString();
         continue;
       }
       const body = await readCapped(response.body, maxBodyBytes);
+      upstreamBody = null;
       return { url: url.toString(), status: response.status, headers, body, pinnedAddress: pinned };
     } catch (error) {
       if (error instanceof ProbeError) {
@@ -216,7 +270,8 @@ export async function safeFetch(rawUrl: string, options: SafeFetchOptions): Prom
       throw new ProbeError(error instanceof Error ? error.message : "request failed");
     } finally {
       clearTimeout(timer);
-      await dispatcher.close().catch(() => undefined);
+      destroyBody(upstreamBody);
+      destroyDispatcher(dispatcher);
     }
   }
 

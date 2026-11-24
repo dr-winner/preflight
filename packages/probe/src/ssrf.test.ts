@@ -149,4 +149,90 @@ describe("SSRF guards", () => {
       }),
     ).rejects.toThrow(/body exceeds cap/);
   });
+
+  it("returns while a redirect body is still streaming", async () => {
+    let pulled = 0;
+    const started = Date.now();
+    const response = await safeFetch("https://example.com/redirect", {
+      userAgent: "PreflightBot/1.0 (+https://preflight.example/bot)",
+      totalTimeoutMs: 500,
+      lookup: async () => ["1.1.1.1"],
+      request: async (url) => {
+        if (url.hostname === "example.com") {
+          return {
+            status: 302,
+            headers: { location: "https://other.example/next" },
+            body: (async function* () {
+              yield new Uint8Array(0);
+              pulled += 1;
+              await new Promise(() => undefined);
+            })(),
+          };
+        }
+        return { status: 204, headers: {}, body: null };
+      },
+    });
+    expect(response.status).toBe(204);
+    expect(Date.now() - started).toBeLessThan(500);
+    expect(pulled).toBe(0);
+  });
+
+  it("returns while an oversized body keeps streaming", async () => {
+    let yielded = 0;
+    const started = Date.now();
+    await expect(
+      safeFetch("https://example.com/stream", {
+        userAgent: "PreflightBot/1.0 (+https://preflight.example/bot)",
+        maxBodyBytes: 8,
+        totalTimeoutMs: 500,
+        lookup: async () => ["1.1.1.1"],
+        request: async () => ({
+          status: 200,
+          headers: {},
+          body: (async function* () {
+            while (true) {
+              yielded += 1;
+              yield new Uint8Array(64);
+              await new Promise(() => undefined);
+            }
+          })(),
+        }),
+      }),
+    ).rejects.toThrow(/body exceeds cap/);
+    expect(Date.now() - started).toBeLessThan(500);
+    expect(yielded).toBe(1);
+  });
+
+  it("does not forward a POST body or caller headers across origins", async () => {
+    const seen: { method: string; body?: string; caller?: string }[] = [];
+    const response = await safeFetch("https://example.com/start", {
+      method: "POST",
+      body: '{"secret":true}',
+      headers: { "x-caller": "1" },
+      userAgent: "PreflightBot/1.0 (+https://preflight.example/bot)",
+      lookup: async () => ["1.1.1.1"],
+      request: async (url, init) => {
+        seen.push({
+          method: init.method,
+          ...(init.body === undefined ? {} : { body: init.body }),
+          ...(init.headers["x-caller"] === undefined ? {} : { caller: init.headers["x-caller"] }),
+        });
+        if (url.hostname === "example.com") {
+          return {
+            status: 302,
+            headers: { location: "https://other.example/next" },
+            body: null,
+          };
+        }
+        return { status: 200, headers: { "content-type": "application/json" }, body: null };
+      },
+    });
+    expect(response.status).toBe(200);
+    expect(seen[0]?.method).toBe("POST");
+    expect(seen[0]?.body).toBe('{"secret":true}');
+    expect(seen[0]?.caller).toBe("1");
+    expect(seen[1]?.method).toBe("GET");
+    expect(seen[1]?.body).toBeUndefined();
+    expect(seen[1]?.caller).toBeUndefined();
+  });
 });
